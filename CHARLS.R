@@ -42,7 +42,6 @@ names(community)
 length(community$communityID)
 #JB029
 facility<-community[,c("communityID","sub_commuID","jb029_1_1_","jb029_1_2_","jb029_1_3_","jb029_1_4_","jb029_1_5_","jb029_1_6_","jb029_1_11_","jb029_1_14_")]
-#facility<-community[,c("communityID","sub_commuID","jb029_1_1_","jb029_1_2_","jb029_1_3_","jb029_1_4_","jb029_1_5_","jb029_1_6_","jb029_1_7_","jb029_1_8_","jb029_1_11_","jb029_1_14_")]
 names(facility)
 
 ##############################################
@@ -154,8 +153,8 @@ table(demo$ba000_w2_3)
 
 #married status
 table(demo$be001)
-# 1 Married with spouse present                                                                   #15069 
-#2 Married but not living with spouse temporarily for reasons such as work                                                                     #1067                                                              #3 Separated                                                                       #67                                                               #4 Divorced                                                                      #155                                                                 #5 Widowed                                                                      #2055                                                          #6 Never married                                                                      #156                                                            #7 Cohabitated                                                                       #16 
+# 1 Married with spouse present                        #15069 
+#2 Married but not living with spouse temporarily for reasons such as work                   #1067                                                              #3 Separated                                                                       #67                                                               #4 Divorced                                                                      #155                                                                 #5 Widowed                                                                      #2055                                                          #6 Never married                                                                      #156                                                            #7 Cohabitated                                                                       #16 
 
 #change all yes or no factors to numeric
 demo[,-c(1:3)]<-tbl_df(sapply(demo[,-c(1:3)], as.numeric))
@@ -382,19 +381,6 @@ mydata<-filter(mydata,age>=45)
 #> 6085-5949
 #[1] 136
 
-# calculate effect size: cliff's delta
-
-#subset the data
-mydata_rural<-filter(mydata, urban_nbs==1)
-mydata_urban<-filter(mydata, urban_nbs==2)
-
-#get delta output
-delta_output=list(NA)
-for(i in 1:length(mydata)){
-	delta_output[[i]]<-cliff.delta(mydata_rural[,i],mydata_urban[,i],na.rm=T)
-	}
-
-delta_output
 
 
 #replace missing value to -998
@@ -409,7 +395,7 @@ imputeMedian=function(x){
    x[is.na(x)] =median(x, na.rm=TRUE) #convert the item with NA to median value from the column
    x #display the column
 }
-mydata<-data.frame(apply(mydata,2,imputeMedian))
+#mydata<-data.frame(apply(mydata,2,imputeMedian))
 
 ###############################################
 library(mice)
@@ -427,7 +413,7 @@ mydataImp1<-cbind(mydata[,1:3],mydataImp1)
 #mydataImp1<-sapply(mydataImp1,as.numeric)
 
 ###############################################
-#total PA score
+#total PA and leiaure PA score
 
 mydataImp1$TPA<-mydataImp1$vig_total*8+mydataImp1$mod_total*4+mydataImp1$walk_total*3.3
 
@@ -436,12 +422,8 @@ mydataImp1$LPA<-mydataImp1$vig_leisure*8+mydataImp1$mod_leisure*4+mydataImp1$wal
 
 ###############################################
 
-
 #summary stat
 by(mydataImp1, mydataImp1$urban_nbs,summary)
-
-
-
 
 
 ###############################################
@@ -452,7 +434,7 @@ library(foreign)
 #col names and row names need to be deleted
 write.table(mydata, "mydata.dat",col.names=F,row.names=F,sep="\t")
 
-write.table(mydataImp1, "mydataImp111.dat",col.names=F,row.names=F,sep="\t")
+write.table(mydataImp1, "mydataImp1.dat",col.names=F,row.names=F,sep="\t")
 
 
 ###############################################
@@ -501,36 +483,11 @@ sd(mycommunity$jc001[mycommunity$urban_nbs==2],na.rm=T)
 ###############################################
 
 
-3 Saving an R session
-You can save an entire R session (which includes all data objects) using the save function.
-To save all objects, set the list= parameter to ls():
-save(list = ls(), file = "../Data/ACS_all.Rdata")
-To save only two R session objects to a file, pass the list of object to the list= parameter:
-save(list = c(dat, dat.sub), file = "../Data/ACS_subset.Rdata")
-4 Loading an R session
-To load a previously saved R session type:
-load("../Data/ACS_all.Rdata")
-
-
-
-#coeff ci standardized
-ci<-read.table("coeff.txt")
-ci$V4/ci$V8
-ci/(ci$V4/ci$V8)
 
 
 
 
 
-
-
-
-mydataImp<-read.table("mydataImp.dat")
-
-mydataImp$V33<-mydataImp$V7*8+mydataImp$V8*4 +mydataImp$V9*3.3
-
-library(foreign)
-write.table(mydataImp, "mydataImp1.dat",col.names=F,row.names=F,sep="\t")
 
 
 
