@@ -1,0 +1,63 @@
+
+
+Title: CHARLS data total PA unconstrained structural model 
+
+Data:
+     File is mydataImp1.dat;
+
+Variable:
+     Names are
+          ID  householdID communityID
+          gender marry age vig_index
+          mod_index walk_index vigL modL walkL
+          vigNL modNL walkNL
+          adl1-adl5 dc009-dc018
+          urban facility tpa lpa;
+
+     Usevariables are 
+          adl1-adl5 dc009-dc012
+          dc014 dc015 dc017-dc018
+          urban facility tpa;
+
+ GROUPING is urban (1=rural 2=urban);    
+ 
+     
+Analysis:
+     Estimator = ML;
+     Bootstrap =20000;
+
+Model:
+
+     dep BY dc009-dc012 dc014 dc015 dc017-dc018;
+     adl BY adl1-adl5;
+     tpa ON facility ;
+     dep ON facility;! (2);
+     adl ON facility ;
+     adl ON tpa;! (4);
+     dep ON tpa;! (5);
+     dep ON adl;! (6);
+          adl1  WITH adl2;
+          
+Model indirect:
+	dep IND facility;
+	adl IND facility; 
+	dep IND tpa;
+
+	          
+Model urban:
+     
+
+     tpa ON facility;
+     dep ON facility;! (2);
+     adl ON facility ;
+     adl ON tpa;! (4); 
+     dep ON tpa;! (5);
+     dep ON adl;! (6);
+          adl1  WITH adl2;
+  Output:
+       TECH1 TECH4 CINTERVAL (BCBOOTSTRAP) standardized;
+
+
+
+
+

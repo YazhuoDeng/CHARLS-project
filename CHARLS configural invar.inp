@@ -1,0 +1,57 @@
+
+Title: CHARLS data configural invariance test 
+
+Data:
+     File is mydataImp1.dat;
+
+Variable:
+     Names are
+          ID  householdID communityID
+          gender marry age vig_index
+          mod_index walk_index vigL modL walkL
+          vigNL modNL walkNL
+          adl1-adl5 dc009-dc018
+          urban facility tpa lpa;
+
+     Usevariables are 
+          adl1-adl5 dc009-dc012
+          dc014 dc015 dc017-dc018
+          urban;
+          
+     GROUPING=urban (1=rural 2=urban);
+     
+Analysis:
+     Estimator = ML;
+
+
+Model:
+     dep BY dc009-dc012 
+      dc014 
+      dc015 
+      dc017-dc018 ;
+     adl BY adl1-adl5 ;
+     !mod index suggest correlated error variance 
+     adl1  WITH adl2;
+     [dep@0 adl@0]; !factor means fix to 0
+
+
+Model urban:
+     !factor loadings all freely estimated
+     dep BY dc009@1 dc010-dc012 dc014 dc015 dc017-dc018;
+     adl BY adl1@1 adl2-adl5;
+   
+     ! Item intercepts all freely estimated
+          [adl1-adl5 dc009-dc012
+          dc014 dc015 dc017-dc018]; 
+     
+     
+  Output:
+       TECH1 TECH4 MODINDICES standardized;
+
+
+
+
+
+
+
+	
